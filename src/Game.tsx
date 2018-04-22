@@ -1,8 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
+/* tslint:disable */
+import * as React from "react";
+import "./Game.css";
 
-function Square(props) {
+interface ISquareProps {
+  onClick(e: React.MouseEvent<HTMLElement>): void,
+  value: string
+}
+
+const Square: React.SFC<ISquareProps> = props => {
   return (
     <button className="square" onClick={props.onClick}>
       {props.value}
@@ -10,8 +15,14 @@ function Square(props) {
   );
 }
 
-class Board extends React.Component {
-  renderSquare(i) {
+interface IBoardProps {
+  squares: Square[],
+  onClick(i: number): void,
+  isNextX: boolean
+}
+
+class Board extends React.Component<IBoardProps, object> {
+  renderSquare(i: number) {
     return (
       <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />
     );
@@ -39,21 +50,30 @@ class Board extends React.Component {
   }
 }
 
-class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null),
-          isNextX: true
-        }
-      ],
-      currentStep: 0,
-    };
-  }
+type Square = string;
+type BoardState = { squares: Square[], isNextX: boolean};
 
-  handleClick(i) {
+interface IGameState {
+  history: BoardState[],
+  currentStep: number
+}
+
+const initialGameState: IGameState =  {
+  history: [
+    {
+      squares: Array(9).fill(null),
+      isNextX: true
+    }
+  ],
+  currentStep: 0,
+};
+
+// type GameState = Readonly<typeof initialGameState>;
+
+class Game extends React.Component<object, IGameState> {
+  readonly state: IGameState = initialGameState;
+
+  handleClick(i: number) {
     let currentStep = this.state.currentStep;
     let history = this.state.history.slice(0, currentStep + 1);    
     let squares = history[currentStep].squares.slice();
@@ -71,7 +91,7 @@ class Game extends React.Component {
     });
   }
 
-  jumpTo(step) {
+  jumpTo(step: number) {
     this.setState({
       currentStep: step      
     });
@@ -110,7 +130,12 @@ class Game extends React.Component {
   }
 }
 
-class History extends React.Component {
+interface IHistoryProps {
+  history: BoardState[],
+  onClick(step: number): void
+}
+
+class History extends React.Component<IHistoryProps, object> {
   render() {
     let history = this.props.history;
     return history.map((state, step) => {
@@ -121,9 +146,7 @@ class History extends React.Component {
   }
 }
 
-ReactDOM.render(<Game />, document.getElementById("root"));
-
-function calculateWinner(squares) {
+function calculateWinner(squares: Square[]) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -142,3 +165,5 @@ function calculateWinner(squares) {
   }
   return null;
 }
+
+export default Game;
