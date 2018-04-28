@@ -1,20 +1,19 @@
-/* tslint:disable */
 import * as React from "react";
 import "./styles.css";
 
-import {BoardState} from "../../services/types";
+import {IBoardState} from "../../services/types";
 
 interface IHistoryProps {
-  history: BoardState[],
+  history: IBoardState[],
   onClick(step: number): void
 }
 
 class History extends React.Component<IHistoryProps, object> {
-  render() {
-    let history = this.props.history;
+  public render() {
+    const history = this.props.history;
     return history.map((state, step) => {
       return (<li key={step}>
-        <button onClick={() => {this.props.onClick(step)}}>Goto Step{step}</button>
+        <button onClick={this.props.onClick.bind(this, step)}>Goto Step{step}</button>
       </li>);
     });
   }

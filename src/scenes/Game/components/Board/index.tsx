@@ -1,4 +1,3 @@
-/* tslint:disable */
 import * as React from "react";
 import "./styles.css";
 
@@ -8,17 +7,12 @@ import Square from "../Square";
 
 interface IBoardProps {
   squares: User[],
-  onClick(i: number): void,
   isNextX: boolean
+  onClick(i: number): void,  
 }
 
 class Board extends React.Component<IBoardProps, object> {
-  renderSquare(i: number) {
-    return (
-      <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />
-    );
-  }
-  render() {
+  public render() {
     return (
       <div>
         <div className="board-row">
@@ -37,6 +31,12 @@ class Board extends React.Component<IBoardProps, object> {
           {this.renderSquare(8)}
         </div>
       </div>
+    );
+  }
+    
+  private renderSquare(i: number) {
+    return (
+      <Square value={this.props.squares[i]} onClick={this.props.onClick.bind(this, i)} />
     );
   }
 }
